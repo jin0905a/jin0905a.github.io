@@ -1,156 +1,162 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>모바일 웹</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>국방복지 인증</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-                   "Noto Sans KR", sans-serif;
-      background: #fff;
-      text-align: center;
-      color: #111;
-    }
+<style>
+:root {
+  --purple: #4b1fd3;
+  --purple-light: #7b6fdc;
+  --text-gray: #6f6f6f;
+}
 
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    .refresh {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #f2f2f2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 20px auto;
-      font-size: 22px;
-      cursor: pointer;
-    }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Apple SD Gothic Neo", system-ui, sans-serif;
+  background: #fff;
+}
 
-    .image-box {
-      width: 70%;
-      aspect-ratio: 3 / 4;
-      background: #ccc;
-      margin: 0 auto 20px;
-      overflow: hidden;
-    }
+.app {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-    .image-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.top-space {
+  height: 60px;
+}
 
-    .name {
-      font-size: 22px;
-      font-weight: 600;
-      margin-top: 8px;
-    }
+.refresh {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
 
-    .sub {
-      font-size: 16px;
-      color: #555;
-      margin-top: 4px;
-    }
+.photo {
+  width: 220px;
+  height: 280px;
+  background: #cfcfcf;
+  border-radius: 2px;
+}
 
-    .status {
-      margin: 18px auto;
-      background: #4b19d6;
-      color: #fff;
-      padding: 14px 0;
-      border-radius: 30px;
-      font-size: 18px;
-      font-weight: 600;
-    }
+.name {
+  margin-top: 18px;
+  font-size: 22px;
+  font-weight: 600;
+}
 
-    .qr {
-      margin: 20px 0;
-    }
+.role {
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--text-gray);
+}
 
-    .time {
-      font-size: 18px;
-      margin-bottom: 16px;
-    }
+.button {
+  margin-top: 18px;
+  width: 300px;
+  height: 48px;
+  background: var(--purple);
+  color: #fff;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 600;
+}
 
-    .time span {
-      color: red;
-      font-weight: 600;
-    }
+.qr {
+  margin-top: 18px;
+  width: 110px;
+  height: 110px;
+  background: #000;
+}
 
-    .info {
-      color: #6b5fd3;
-      font-size: 18px;
-      line-height: 1.8;
-      margin-top: 10px;
-    }
+.datetime {
+  margin-top: 12px;
+  font-size: 16px;
+}
 
-    .footer {
-      margin-top: 30px;
-      font-size: 14px;
-      color: #777;
-      line-height: 1.6;
-    }
-  </style>
+.datetime .time {
+  color: red;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.usage {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--purple-light);
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.notice {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: #8c8c8c;
+  line-height: 1.5;
+}
+
+.bottom-space {
+  flex: 1;
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
+<div class="app">
 
-    <div class="refresh" onclick="location.reload()">⟳</div>
+  <div class="top-space"></div>
 
-    <div class="image-box">
-      <img src="https://jin0905a.github.io/box-image.jpg" alt="이미지">
-    </div>
+  <div class="refresh">↻</div>
 
-    <div class="name">손진희</div>
-    <div class="sub">손상용의 자</div>
+  <div class="photo"></div>
 
-    <div class="status">승인완료</div>
+  <div class="name">심유진</div>
+  <div class="role">심상용의 자</div>
 
-    <div class="qr">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=test">
-    </div>
+  <div class="button">승인완료</div>
 
-    <div class="time" id="time"></div>
+  <div class="qr"></div>
 
-    <div class="info">
-      • 마트 이용 가능<br>
-      • 호텔콘도 이용 가능
-    </div>
-
-    <div class="footer">
-      국방복지 회원임을 증명합니다.<br>
-      ※ 캡쳐된 화면은 사용이 불가능합니다.
-    </div>
-
+  <div class="datetime">
+    2026년 02월 01일
+    <span class="time">16:35:20</span>
   </div>
 
-  <script>
-    function updateTime() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const d = String(now.getDate()).padStart(2, '0');
-      const h = String(now.getHours()).padStart(2, '0');
-      const min = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
+  <div class="usage">
+    ○ 마트 이용 가능<br />
+    ○ 호텔콘도 이용 가능
+  </div>
 
-      document.getElementById('time').innerHTML =
-        `${y}년 ${m}월 ${d}일 <span>${h}:${min}:${s}</span>`;
-    }
+  <div class="notice">
+    국방복지 회원임을 증명합니다.<br />
+    ※ 캡쳐된 화면은 사용이 불가능합니다.
+  </div>
 
-    updateTime();
-    setInterval(updateTime, 1000);
-  </script>
+  <div class="bottom-space"></div>
+
+</div>
 </body>
 </html>
