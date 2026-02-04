@@ -4,194 +4,229 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>국방복지 인증</title>
+
 <style>
 :root{
   --purple:#4b1fd3;
   --purple-light:#7b6fdc;
   --text-gray:#6f6f6f;
-  --bg:#ffffff;
 }
 
-/* reset */
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;}
-body{
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo",system-ui,sans-serif;
 }
 
-/* Viewport stage: absolutely no scrolling */
 .stage{
   width:100vw;
-  height:100dvh;              /* dynamic viewport (iOS/Edge address bar changes) */
-  overflow:hidden;
+  height:100dvh;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:
-    calc(env(safe-area-inset-top, 0px) + 8px)
-    16px
-    calc(env(safe-area-inset-bottom, 0px) + 8px)
-    16px;
+    calc(env(safe-area-inset-top, 0px) + 6px)
+    12px
+    calc(env(safe-area-inset-bottom, 0px) + 6px)
+    12px;
+  background:url("bg.jpg") no-repeat center center;
+  background-size:cover;
 }
 
-/* This is the "design canvas" we scale */
 .canvas{
-  width:393px;                /* iPhone 14 Pro CSS width */
-  height:852px;               /* iPhone 14 Pro CSS height */
+  width:360px;
+  height:780px;
   transform-origin:center center;
 }
 
-/* Layout inside canvas */
 .app{
   width:100%;
   height:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
-  background:var(--bg);
 }
 
-/* Spacing tuned to screenshot */
-.top-space{height:78px;}
+.top-space{height:64px;}
+
+/* refresh image button */
 .refresh{
-  width:52px;height:52px;border-radius:50%;
-  background:#f1f1f1;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;
-  margin-bottom:14px;
+  width:46px;
+  height:46px;
+  margin-bottom:10px;
 }
+.refresh img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
 .photo{
-  width:232px;height:290px;
-  background:#cfcfcf;
+  width:200px;
+  height:250px;
+  background:url("box-image.JPG") no-repeat center center;
+  background-size:cover;
   border-radius:2px;
 }
+
 .name{
-  margin-top:18px;
-  font-size:26px;
+  margin-top:14px;
+  font-size:22px;
   font-weight:700;
-  letter-spacing:-0.2px;
 }
+
 .role{
-  margin-top:8px;
-  font-size:18px;
+  margin-top:6px;
+  font-size:15px;
   color:var(--text-gray);
-  letter-spacing:-0.2px;
 }
+
 .button{
-  margin-top:18px;
-  width:328px;height:52px;
+  margin-top:14px;
+  width:280px;
+  height:46px;
   background:var(--purple);
   color:#fff;
-  border-radius:26px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:19px;
+  border-radius:23px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
   font-weight:700;
 }
+
 .qr{
-  margin-top:20px;
-  width:118px;height:118px;
-  background:#000;
+  margin-top:16px;
+  width:104px;
+  height:104px;
 }
+.qr img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+
 .datetime{
-  margin-top:14px;
-  font-size:18px;
-  letter-spacing:-0.2px;
+  margin-top:12px;
+  font-size:15px;
 }
+
 .datetime .time{
   color:#ff2d2d;
-  font-weight:800;
-  margin-left:8px;
+  font-weight:700;
+  margin-left:6px;
 }
+
 .usage{
-  margin-top:18px;
+  margin-top:14px;
   text-align:center;
   color:var(--purple-light);
-  font-size:22px;
-  line-height:1.6;
-  font-weight:700;
-  letter-spacing:-0.2px;
-}
-.notice{
-  margin-top:22px;
-  text-align:center;
-  font-size:16px;
-  color:#8c8c8c;
+  font-size:18px;
   line-height:1.55;
-  letter-spacing:-0.2px;
+  font-weight:700;
 }
+
+.notice{
+  margin-top:16px;
+  text-align:center;
+  font-size:13px;
+  color:#8c8c8c;
+  line-height:1.5;
+}
+
 .bottom-space{flex:1;}
 </style>
 </head>
+
 <body>
-  <div class="stage">
-    <div id="canvas" class="canvas" aria-label="membership-screen">
-      <div class="app">
-        <div class="top-space"></div>
+<div class="stage">
+  <div id="canvas" class="canvas">
+    <div class="app">
 
-        <div class="refresh">↻</div>
+      <div class="top-space"></div>
 
-        <div class="photo"></div>
-
-        <div class="name">심유진</div>
-        <div class="role">심상용의 자</div>
-
-        <div class="button">승인완료</div>
-
-        <div class="qr"></div>
-
-        <div class="datetime">
-          2026년 02월 01일 <span class="time">16:35:20</span>
-        </div>
-
-        <div class="usage">
-          ○ 마트 이용 가능<br/>
-          ○ 호텔콘도 이용 가능
-        </div>
-
-        <div class="notice">
-          국방복지 회원임을 증명합니다.<br/>
-          ※ 캡쳐된 화면은 사용이 불가능합니다.
-        </div>
-
-        <div class="bottom-space"></div>
+      <div class="refresh" onclick="refreshPage()">
+        <img src="new.jpg" alt="refresh">
       </div>
+
+      <div class="photo"></div>
+
+      <div class="name">심유진</div>
+      <div class="role">심상용의 자</div>
+
+      <div class="button">승인완료</div>
+
+      <div class="qr">
+        <img src="qr.png" alt="QR Code">
+      </div>
+
+      <div class="datetime">
+        <span id="dateText"></span>
+        <span class="time" id="timeText"></span>
+      </div>
+
+      <div class="usage">
+        ○ 마트 이용 가능<br/>
+        ○ 호텔콘도 이용 가능
+      </div>
+
+      <div class="notice">
+        국방복지 회원임을 증명합니다.<br/>
+        ※ 캡쳐된 화면은 사용이 불가능합니다.
+      </div>
+
+      <div class="bottom-space"></div>
+
     </div>
   </div>
+</div>
 
 <script>
-/**
- * No-scroll guarantee:
- * - Keep the original design ratio (393x852).
- * - Scale the canvas down (never up) to fit inside the current viewport.
- */
+/* realtime clock */
+function updateTime(){
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+
+  document.getElementById('dateText').textContent =
+    `${yyyy}년 ${mm}월 ${dd}일`;
+  document.getElementById('timeText').textContent =
+    `${hh}:${mi}:${ss}`;
+}
+setInterval(updateTime,1000);
+updateTime();
+
+/* refresh */
+function refreshPage(){
+  location.reload();
+}
+
+/* no-scroll + scale fit */
 (function(){
-  const DESIGN_W = 393;
-  const DESIGN_H = 852;
+  const DESIGN_W = 360;
+  const DESIGN_H = 780;
   const canvas = document.getElementById('canvas');
 
   function fit(){
     const stage = document.querySelector('.stage');
     const rect = stage.getBoundingClientRect();
-
-    // available space inside stage padding
-    const availW = rect.width;
-    const availH = rect.height;
-
-    const scale = Math.min(availW / DESIGN_W, availH / DESIGN_H, 1); // never upscale
+    const scale = Math.min(rect.width / DESIGN_W, rect.height / DESIGN_H, 1);
     canvas.style.transform = `scale(${scale})`;
-
-    // ensure stage never scrolls (belt & suspenders)
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
   }
 
   window.addEventListener('resize', fit, {passive:true});
-  window.addEventListener('orientationchange', fit, {passive:true});
-  // iOS address bar show/hide can fire visualViewport resize
-  if (window.visualViewport) {
+  if (window.visualViewport){
     window.visualViewport.addEventListener('resize', fit, {passive:true});
   }
-
   fit();
 })();
 </script>
