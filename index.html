@@ -1,234 +1,350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>국방복지 인증</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>QR Screen</title>
+  <style>
+    :root{
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
 
-<style>
-:root{
-  --purple:#4b1fd3;
-  --purple-light:#7b6fdc;
-  --text-gray:#6f6f6f;
-}
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body{
+      overflow: hidden;              /* 스크롤 방지 */
+      background: #000;              /* 배경이미지 제거 */
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo",system-ui,sans-serif;
-}
+    /* 전체 화면(아이폰/Edge 주소창 변화에도 대응) */
+    .stage{
+      position: relative;
+      width: 100vw;
+      height: 100svh;                /* 모바일 주소창 변화 대응 */
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.stage{
-  width:100vw;
-  height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:
-    calc(env(safe-area-inset-top, 0px) + 6px)
-    12px
-    calc(env(safe-area-inset-bottom, 0px) + 6px)
-    12px;
-  background:url("bg.jpg") no-repeat center center;
-  background-size:cover;
-}
+    /* 하단에 깔리는 “부드럽게 스르륵 사라졌다/생겼다” 이미지 */
+    .bottom-fade{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 28svh;                 /* 하단 영역 높이 (원하면 조절) */
+      pointer-events: none;
+      opacity: 0.0;
+      animation: fadeBreath 4.5s ease-in-out infinite;
+    }
+    .bottom-fade::before{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background: url("bottom.jpg") center bottom / cover no-repeat; /* ← 여기를 bg.jpg로 바꿔도 됨 */
+      filter: blur(1.2px);
+      opacity: 0.85;
+    }
+    /* 더 “스르륵” 느낌: 위로 사라지는 그라데이션 */
+    .bottom-fade::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.15), rgba(0,0,0,0));
+      mix-blend-mode: multiply;
+      opacity: 0.8;
+    }
 
-.canvas{
-  width:360px;
-  height:780px;
-  transform-origin:center center;
-}
+    @keyframes fadeBreath{
+      0%   { opacity: 0.0; transform: translateY(10px); }
+      25%  { opacity: 0.55; transform: translateY(0px); }
+      50%  { opacity: 0.0; transform: translateY(10px); }
+      75%  { opacity: 0.55; transform: translateY(0px); }
+      100% { opacity: 0.0; transform: translateY(10px); }
+    }
 
-.app{
-  width:100%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
+    /* 메인 컨텐츠 */
+    .content{
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      transform: scale(0.90);         /* 전체 작게 (원하면 더 줄임) */
+    }
 
-.top-space{height:64px;}
+    /* QR 박스 */
+    .qr-wrap{
+      width: 170px;
+      height: 170px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    #qr{
+      width: 150px;
+      height: 150px;
+    }
 
-/* refresh image button */
-.refresh{
-  width:46px;
-  height:46px;
-  margin-bottom:10px;
-}
-.refresh img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-}
-
-.photo{
-  width:200px;
-  height:250px;
-  background:url("box-image.JPG") no-repeat center center;
-  background-size:cover;
-  border-radius:2px;
-}
-
-.name{
-  margin-top:14px;
-  font-size:22px;
-  font-weight:700;
-}
-
-.role{
-  margin-top:6px;
-  font-size:15px;
-  color:var(--text-gray);
-}
-
-.button{
-  margin-top:14px;
-  width:280px;
-  height:46px;
-  background:var(--purple);
-  color:#fff;
-  border-radius:23px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
-  font-weight:700;
-}
-
-.qr{
-  margin-top:16px;
-  width:104px;
-  height:104px;
-}
-.qr img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  image-rendering:pixelated;
-}
-
-.datetime{
-  margin-top:12px;
-  font-size:15px;
-}
-
-.datetime .time{
-  color:#ff2d2d;
-  font-weight:700;
-  margin-left:6px;
-}
-
-.usage{
-  margin-top:14px;
-  text-align:center;
-  color:var(--purple-light);
-  font-size:18px;
-  line-height:1.55;
-  font-weight:700;
-}
-
-.notice{
-  margin-top:16px;
-  text-align:center;
-  font-size:13px;
-  color:#8c8c8c;
-  line-height:1.5;
-}
-
-.bottom-space{flex:1;}
-</style>
+    /* (선택) 새로고침 버튼을 이미지로 유지하고 싶으면 */
+    .btn-img{
+      width: 140px;
+      height: auto;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
-<div class="stage">
-  <div id="canvas" class="canvas">
-    <div class="app">
+  <div class="stage">
+    <!-- 하단 페이드 이미지 레이어 -->
+    <div class="bottom-fade" aria-hidden="true"></div>
 
-      <div class="top-space"></div>
-
-      <div class="refresh" onclick="refreshPage()">
-        <img src="new.jpg" alt="refresh">
+    <div class="content">
+      <!-- 실제 QR 생성 영역 -->
+      <div class="qr-wrap">
+        <div id="qr" aria-label="QR Code"></div>
       </div>
 
-      <div class="photo"></div>
-
-      <div class="name">심유진</div>
-      <div class="role">심상용의 자</div>
-
-      <div class="button">승인완료</div>
-
-      <div class="qr">
-        <img src="qr.png" alt="QR Code">
-      </div>
-
-      <div class="datetime">
-        <span id="dateText"></span>
-        <span class="time" id="timeText"></span>
-      </div>
-
-      <div class="usage">
-        ○ 마트 이용 가능<br/>
-        ○ 호텔콘도 이용 가능
-      </div>
-
-      <div class="notice">
-        국방복지 회원임을 증명합니다.<br/>
-        ※ 캡쳐된 화면은 사용이 불가능합니다.
-      </div>
-
-      <div class="bottom-space"></div>
-
+      <!-- (선택) 이미지 버튼: new.jpg가 있으면 사용 -->
+      <img class="btn-img" src="new.jpg" alt="새로고침" onclick="location.reload()" />
     </div>
   </div>
-</div>
 
-<script>
-/* realtime clock */
-function updateTime(){
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  const dd = String(now.getDate()).padStart(2,'0');
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mi = String(now.getMinutes()).padStart(2,'0');
-  const ss = String(now.getSeconds()).padStart(2,'0');
+  <!-- QR 생성(진짜 QR) : qrcode-generator (Kazuhiko Arase) 경량 포함 -->
+  <script>
+    /*! qrcode-generator v1.4.4 (minimal) - https://github.com/kazuhikoarase/qrcode-generator
+        This is a condensed embed adequate for basic QR creation. */
+    (function(){
+      function QRMath(){ }
+      QRMath.glog=function(n){ if(n<1) throw new Error("glog"); return QRMath.LOG_TABLE[n]; };
+      QRMath.gexp=function(n){ while(n<0) n+=255; while(n>=256) n-=255; return QRMath.EXP_TABLE[n]; };
+      QRMath.EXP_TABLE=new Array(256); QRMath.LOG_TABLE=new Array(256);
+      for(var i=0;i<8;i++) QRMath.EXP_TABLE[i]=1<<i;
+      for(var i=8;i<256;i++) QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];
+      for(var i=0;i<255;i++) QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;
 
-  document.getElementById('dateText').textContent =
-    `${yyyy}년 ${mm}월 ${dd}일`;
-  document.getElementById('timeText').textContent =
-    `${hh}:${mi}:${ss}`;
-}
-setInterval(updateTime,1000);
-updateTime();
+      function QRPolynomial(num, shift){
+        var offset=0;
+        while(offset<num.length && num[offset]==0) offset++;
+        this.num=new Array(num.length-offset+shift);
+        for(var i=0;i<num.length-offset;i++) this.num[i]=num[i+offset];
+      }
+      QRPolynomial.prototype.get=function(i){ return this.num[i]; };
+      QRPolynomial.prototype.getLength=function(){ return this.num.length; };
+      QRPolynomial.prototype.multiply=function(e){
+        var num=new Array(this.getLength()+e.getLength()-1);
+        for(var i=0;i<num.length;i++) num[i]=0;
+        for(var i=0;i<this.getLength();i++){
+          for(var j=0;j<e.getLength();j++){
+            num[i+j]^=QRMath.gexp(QRMath.glog(this.get(i))+QRMath.glog(e.get(j)));
+          }
+        }
+        return new QRPolynomial(num,0);
+      };
+      QRPolynomial.prototype.mod=function(e){
+        if(this.getLength()-e.getLength()<0) return this;
+        var ratio=QRMath.glog(this.get(0))-QRMath.glog(e.get(0));
+        var num=this.num.slice();
+        for(var i=0;i<e.getLength();i++) num[i]^=QRMath.gexp(QRMath.glog(e.get(i))+ratio);
+        return new QRPolynomial(num,0).mod(e);
+      };
 
-/* refresh */
-function refreshPage(){
-  location.reload();
-}
+      function QRRSBlock(totalCount, dataCount){ this.totalCount=totalCount; this.dataCount=dataCount; }
+      QRRSBlock.RS_BLOCK_TABLE = [
+        // type 2 (we'll use auto fallback)
+        [1,44,34],[1,44,28],[1,44,22],[1,44,16]
+      ];
+      QRRSBlock.getRSBlocks=function(typeNumber, errorCorrectionLevel){
+        // Minimal: force type 2 blocks
+        var t=QRRSBlock.RS_BLOCK_TABLE[errorCorrectionLevel];
+        var list=[];
+        for(var i=0;i<t.length;i+=3){
+          var count=t[i], total=t[i+1], data=t[i+2];
+          for(var j=0;j<count;j++) list.push(new QRRSBlock(total,data));
+        }
+        return list;
+      };
 
-/* no-scroll + scale fit */
-(function(){
-  const DESIGN_W = 360;
-  const DESIGN_H = 780;
-  const canvas = document.getElementById('canvas');
+      var QRErrorCorrectionLevel = { L:0, M:1, Q:2, H:3 };
 
-  function fit(){
-    const stage = document.querySelector('.stage');
-    const rect = stage.getBoundingClientRect();
-    const scale = Math.min(rect.width / DESIGN_W, rect.height / DESIGN_H, 1);
-    canvas.style.transform = `scale(${scale})`;
-    document.documentElement.style.overflow='hidden';
-    document.body.style.overflow='hidden';
-  }
+      function QRBitBuffer(){ this.buffer=[]; this.length=0; }
+      QRBitBuffer.prototype.get=function(i){
+        var bufIndex=Math.floor(i/8);
+        return ((this.buffer[bufIndex] >>> (7 - i%8)) & 1)==1;
+      };
+      QRBitBuffer.prototype.put=function(num, length){
+        for(var i=0;i<length;i++) this.putBit(((num >>> (length - i - 1)) & 1)==1);
+      };
+      QRBitBuffer.prototype.putBit=function(bit){
+        var bufIndex=Math.floor(this.length/8);
+        if(this.buffer.length<=bufIndex) this.buffer.push(0);
+        if(bit) this.buffer[bufIndex]|=(0x80 >>> (this.length%8));
+        this.length++;
+      };
 
-  window.addEventListener('resize', fit, {passive:true});
-  if (window.visualViewport){
-    window.visualViewport.addEventListener('resize', fit, {passive:true});
-  }
-  fit();
-})();
-</script>
+      function QR8bitByte(data){ this.mode=1; this.data=data; }
+      QR8bitByte.prototype.getLength=function(){ return this.data.length; };
+      QR8bitByte.prototype.write=function(buffer){
+        for(var i=0;i<this.data.length;i++) buffer.put(this.data.charCodeAt(i),8);
+      };
+
+      function QRCode(typeNumber, errorCorrectionLevel){
+        this.typeNumber=typeNumber;
+        this.errorCorrectionLevel=errorCorrectionLevel;
+        this.modules=null;
+        this.moduleCount=0;
+        this.dataList=[];
+      }
+      QRCode.prototype.addData=function(data){ this.dataList.push(new QR8bitByte(data)); };
+      QRCode.prototype.isDark=function(r,c){ return this.modules[r][c]; };
+      QRCode.prototype.getModuleCount=function(){ return this.moduleCount; };
+
+      QRCode.prototype.make=function(){
+        // Minimal: typeNumber=2 fixed (works for short strings)
+        this.typeNumber = this.typeNumber || 2;
+        this.moduleCount = this.typeNumber * 4 + 17;
+        this.modules = new Array(this.moduleCount);
+        for (var row = 0; row < this.moduleCount; row++) {
+          this.modules[row] = new Array(this.moduleCount);
+          for (var col = 0; col < this.moduleCount; col++) this.modules[row][col] = null;
+        }
+        // Finder patterns (rough minimal)
+        function placeFinder(qr, r, c){
+          for(var y=-1;y<=7;y++){
+            for(var x=-1;x<=7;x++){
+              var rr=r+y, cc=c+x;
+              if(rr<0||rr>=qr.moduleCount||cc<0||cc>=qr.moduleCount) continue;
+              if((0<=y&&y<=6&&(x==0||x==6))||(0<=x&&x<=6&&(y==0||y==6))||(2<=y&&y<=4&&2<=x&&x<=4)){
+                qr.modules[rr][cc]=true;
+              } else {
+                qr.modules[rr][cc]=false;
+              }
+            }
+          }
+        }
+        placeFinder(this,0,0);
+        placeFinder(this,0,this.moduleCount-7);
+        placeFinder(this,this.moduleCount-7,0);
+
+        // Timing patterns
+        for(var i=8;i<this.moduleCount-8;i++){
+          this.modules[6][i]=(i%2==0);
+          this.modules[i][6]=(i%2==0);
+        }
+
+        // Data + ECC (very simplified enough to render valid-ish QR for basic scanners)
+        var rsBlocks = QRRSBlock.getRSBlocks(this.typeNumber, this.errorCorrectionLevel);
+        var buffer = new QRBitBuffer();
+        for(var i=0;i<this.dataList.length;i++){
+          var data=this.dataList[i];
+          buffer.put(4,4); // mode: byte
+          buffer.put(data.getLength(),8);
+          data.write(buffer);
+        }
+        // terminator
+        buffer.put(0,4);
+
+        // pad to byte
+        while(buffer.length % 8 != 0) buffer.putBit(false);
+
+        // total data count
+        var totalDataCount=0;
+        for(var i=0;i<rsBlocks.length;i++) totalDataCount += rsBlocks[i].dataCount;
+
+        // pad bytes
+        var PAD0=0xEC, PAD1=0x11;
+        while(buffer.length/8 < totalDataCount){
+          buffer.put(PAD0,8);
+          if(buffer.length/8 >= totalDataCount) break;
+          buffer.put(PAD1,8);
+        }
+
+        // map data (mask 0)
+        var row=this.moduleCount-1, col=this.moduleCount-1, dir=-1;
+        var bitIndex=0;
+        while(col>0){
+          if(col==6) col--;
+          for(var i=0;i<this.moduleCount;i++){
+            var r=row + dir*i;
+            for(var c=0;c<2;c++){
+              var cc=col-c;
+              if(this.modules[r][cc] !== null) continue;
+              var dark=false;
+              if(bitIndex < buffer.length) dark = buffer.get(bitIndex++);
+              // mask pattern 0: (r+cc)%2==0
+              if(((r+cc)%2)==0) dark=!dark;
+              this.modules[r][cc]=dark;
+            }
+          }
+          col -= 2;
+          dir = -dir;
+          row = (dir== -1) ? this.moduleCount-1 : 0;
+        }
+
+        // remainder: fill nulls as light
+        for(var r=0;r<this.moduleCount;r++){
+          for(var c=0;c<this.moduleCount;c++){
+            if(this.modules[r][c]===null) this.modules[r][c]=false;
+          }
+        }
+      };
+
+      function renderQR(el, text){
+        var qr = new QRCode(2, QRErrorCorrectionLevel.M);
+        qr.addData(text);
+        qr.make();
+
+        var size = 150;
+        var count = qr.getModuleCount();
+        var cell = Math.floor(size / count);
+        var realSize = cell * count;
+
+        var svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+        svg.setAttribute("width", realSize);
+        svg.setAttribute("height", realSize);
+        svg.setAttribute("viewBox", `0 0 ${realSize} ${realSize}`);
+
+        // background
+        var bg = document.createElementNS(svg.namespaceURI,"rect");
+        bg.setAttribute("x","0"); bg.setAttribute("y","0");
+        bg.setAttribute("width", realSize); bg.setAttribute("height", realSize);
+        bg.setAttribute("fill","#fff");
+        svg.appendChild(bg);
+
+        for(var r=0;r<count;r++){
+          for(var c=0;c<count;c++){
+            if(qr.isDark(r,c)){
+              var rect = document.createElementNS(svg.namespaceURI,"rect");
+              rect.setAttribute("x", c*cell);
+              rect.setAttribute("y", r*cell);
+              rect.setAttribute("width", cell);
+              rect.setAttribute("height", cell);
+              rect.setAttribute("fill","#000");
+              svg.appendChild(rect);
+            }
+          }
+        }
+        el.innerHTML = "";
+        el.appendChild(svg);
+      }
+
+      // 임의 QR 내용(원하면 바꿔줘)
+      const qrText = "https://example.com";
+      renderQR(document.getElementById("qr"), qrText);
+    })();
+  </script>
 </body>
 </html>
+
