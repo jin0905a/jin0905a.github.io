@@ -41,16 +41,17 @@ body{
   position:relative;
 }
 
+/* 카드 */
 .card{
   position:relative;
-  z-index:1;
+  z-index:2;
   padding:10px 22px 0;
   display:flex;
   flex-direction:column;
   align-items:center;
 }
 
-/* ✅ 새로고침 버튼: new.jpg */
+/* 새로고침 */
 .refresh{
   width:56px;
   height:56px;
@@ -62,7 +63,7 @@ body{
   height:100%;
   object-fit:contain;
 }
-.refresh:active{ opacity:.7 }
+.refresh:active{opacity:.7}
 
 /* 사진 */
 .photo{
@@ -115,35 +116,36 @@ body{
   height:85px;
 }
 
-/* 날짜/시간 */
+/* 날짜/시간 – 가운데 */
 .datetime{
   margin-top:12px;
   width:300px;
-  text-align:left;        /* 기준 정렬 */
+  text-align:center;              /* ✅ 가운데 */
   font-size:18px;
   letter-spacing:-0.3px;
 }
 .datetime .date{
-  font-weight:400;        /* 날짜 bold 해제 */
+  font-weight:400;
 }
 .datetime .time{
-  font-weight:700;        /* 시간만 bold */
+  font-weight:700;
   color:var(--time-red);
 }
 
-/* 마트/호텔 */
+/* 마트/호텔 – 날짜와 같은 기준, 왼쪽 정렬 */
 .bullets{
   margin-top:16px;
-  width:300px;
+  width:300px;                    /* 날짜와 동일 */
   color:var(--accent);
   font-size:22px;
-  font-weight:600;
+  font-weight:700;                /* ✅ BOLD */
+  text-align:left;                /* ✅ 왼쪽 */
 }
 .item{
   display:flex;
   align-items:center;
   gap:10px;
-  margin:12px 0;          /* ✅ 위아래 간격 증가 */
+  margin:12px 0;
 }
 .circle{
   width:6px;
@@ -162,13 +164,13 @@ body{
   line-height:1.6;
 }
 
-/* ✅ bottom: 거의 바닥, 2/3 크기 */
+/* bottom – 원본 크기, 화면 최하단 */
 .bottom{
   position:absolute;
   left:50%;
-  bottom:-4px;
+  bottom:0;                       /* ✅ 최하단 */
   transform:translateX(-50%);
-  width:225px;            /* 기존 대비 2/3 */
+  width:340px;                    /* ✅ 원본 크기 */
   opacity:.38;
   mix-blend-mode:multiply;
   filter:contrast(1.5) brightness(.8);
@@ -222,8 +224,9 @@ body{
 
     </div>
 
-    <!-- bottom은 카드 맨 아래 -->
+    <!-- bottom은 카드 아래, 화면 최하단 -->
     <img src="bottom.jpg" class="bottom" alt="">
+
   </div>
 </div>
 
