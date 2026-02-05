@@ -1,311 +1,248 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="회원증" />
-  <meta name="format-detection" content="telephone=no,date=no,address=no,email=no" />
-  <title>회원증</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>회원증</title>
 
-  <style>
-    :root{
-      --purple:#4b21ff;
-      --accent:#6d65ff;
-      --time-red:#e11d48;
+<style>
+:root{
+  --purple:#4b21ff;
+  --accent:#6d65ff;
+  --time-red:#e11d48;
+  --scale:1;
+  --userShrink:0.92;
+  --font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+}
 
-      /* 전체 크기(지금 화면이 원본보다 살짝 커 보이면 0.90~0.93) */
-      --userShrink: 0.92;
-      --scale: 1;
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:#fff;
+  font-family:var(--font);
+  overflow:hidden;
+  color:#111;
+}
 
-      /* iOS에서 한글 가독성/원본 느낌에 가장 가까운 기본 */
-      --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-    }
+.viewport{
+  position:fixed;
+  inset:0;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
 
-    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      background:#fff;
-      overflow:hidden;
-      font-family: var(--font);
-      -webkit-text-size-adjust:100%;
-      text-size-adjust:100%;
-      color:#111;
-    }
+.fit{
+  width:393px;
+  transform:scale(var(--scale));
+  transform-origin:top center;
+  position:relative;
+}
 
-    .viewport{
-      position:fixed;
-      inset:0;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right)
-               env(safe-area-inset-bottom) env(safe-area-inset-left);
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-      overflow:hidden;
-      background:#fff;
-    }
+/* ✅ bottom 워터마크: 흰 부분 튀는 느낌 제거 */
+.bottom{
+  position:absolute;
+  right:-20px;
+  bottom:-30px;
+  width:340px;
+  opacity:.28;
+  mix-blend-mode:multiply;
+  filter:brightness(.85) contrast(1.25);
+  pointer-events:none;
+  animation:wmFade 2s ease-in-out infinite;
+}
+@keyframes wmFade{
+  0%{opacity:.28}
+  50%{opacity:0}
+  100%{opacity:.28}
+}
 
-    .fit{
-      width:393px;
-      transform: scale(var(--scale));
-      transform-origin: top center;
-      position:relative;
-    }
+.card{
+  position:relative;
+  z-index:1;
+  padding:10px 22px 18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
 
-    /* ✅ bottom: 현재의 2/3 크기(= 3/2 줄임) + 더 진하고 선명하게 */
-    .bottom{
-      position:absolute;
-      right:-30px;
-      bottom:-40px;
+/* refresh */
+.refresh{
+  width:60px;height:60px;
+  border-radius:50%;
+  background:#f3f4f6;
+  display:grid;
+  place-items:center;
+}
+.refresh svg{
+  width:26px;height:26px;
+  stroke:#111;
+  stroke-width:2.2;
+  fill:none;
+}
 
-      /* 기존 760px → 760*(2/3)=506.7px */
-      width: 507px;
+/* ✅ 사진 1/2 */
+.photo{
+  margin-top:14px;
+  width:125px;
+  height:150px;
+  object-fit:cover;
+}
 
-      opacity: .42; /* 더 진하게 */
-      pointer-events:none;
-      z-index:0;
+/* ✅ 텍스트 얇게 */
+.name{
+  margin-top:14px;
+  font-size:32px;
+  font-weight:600;
+  letter-spacing:-0.6px;
+}
+.sub{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:-0.3px;
+}
 
-      /* 더 선명하게(연회색이지만 존재감 있게) */
-      filter: contrast(1.45) brightness(0.92);
+/* ✅ 승인완료 버튼 중앙 정렬 + 더 길게 */
+.pill{
+  margin-top:16px;
+  width:360px;
+  height:52px;
+  background:var(--purple);
+  color:#fff;
+  border-radius:999px;
 
-      animation: wmFade 2s ease-in-out infinite;
-    }
-    @keyframes wmFade{
-      0%   { opacity:.42; }
-      50%  { opacity:0; }
-      100% { opacity:.42; }
-    }
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-    .card{
-      position:relative;
-      z-index:1;
-      padding: 10px 22px 18px 22px; /* 전체를 더 위로 */
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-0.3px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
 
-    .refresh{
-      width:60px; height:60px;
-      border-radius:999px;
-      background:#f3f4f6;
-      display:grid;
-      place-items:center;
-      margin-top: 0;
-    }
-    .refresh svg{
-      width:26px; height:26px;
-      fill:none;
-      stroke:#111;
-      stroke-width:2.2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
+/* ✅ QR 1/2 */
+.qrWrap{
+  margin-top:12px;
+  width:85px;
+  height:85px;
+}
+.qrWrap img{
+  width:85px;
+  height:85px;
+  display:block;
+}
 
-    /* 사진: 원본처럼 여백 줄이고 비율 유지 */
-    .photo{
-      margin-top: 16px;
-      width: 250px;
-      height: 300px;
-      object-fit:cover;
-      background:#e5e7eb;
-    }
+/* 날짜 얇게 */
+.datetime{
+  margin-top:12px;
+  font-size:22px;
+  font-weight:500;
+  letter-spacing:-0.4px;
+}
+.datetime .time{
+  color:var(--time-red);
+  font-weight:600;
+}
 
-    /* ✅ 폰트/굵기/간격을 원본처럼 정리 */
-    .name{
-      margin-top: 14px;
-      font-size: 36px;
-      font-weight: 800;          /* 원본은 900보다 덜 “뭉툭” */
-      letter-spacing:-0.8px;
-      line-height: 1.05;
-      text-align:center;
-    }
-    .sub{
-      margin-top: 8px;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing:-0.35px;
-      line-height: 1.1;
-      text-align:center;
-    }
+/* ✅ 속 빈 원 */
+.bullets{
+  margin-top:14px;
+  width:320px;
+  font-size:26px;
+  font-weight:600;
+  color:var(--accent);
+}
+.item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.circle{
+  width:14px;
+  height:14px;
+  border:2px solid var(--accent);
+  border-radius:50%;
+}
 
-    /* ✅ 승인완료 버튼: 더 길게(원본처럼 거의 풀폭) */
-    .pill{
-      margin-top: 16px;
-      width: 362px;              /* 더 길게 */
-      height: 52px;
-      border-radius: 999px;
-      background: var(--purple);
-      color:#fff;
-
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing:-0.3px;
-
-      /* 원본처럼 과한 그림자 X */
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-
-    .qrWrap{
-      margin-top: 12px;
-      width: 170px;
-      height: 170px;
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-      background:#fff;
-      line-height:0;
-    }
-    .qrWrap img{
-      width:170px;
-      height:170px;
-      display:block;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-    }
-
-    .datetime{
-      margin-top: 12px;
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing:-0.6px;
-      display:flex;
-      gap: 12px;
-      align-items:baseline;
-      white-space:nowrap;
-    }
-    .datetime .time{
-      color: var(--time-red);
-      font-weight: 900; /* 시간은 원본처럼 더 강조 */
-    }
-
-    .bullets{
-      margin-top: 14px;
-      width: 340px;
-      color: var(--accent);
-      font-weight: 800;
-      font-size: 30px;
-      line-height: 1.25;
-    }
-    .item{ display:flex; gap:12px; }
-    .dot{ transform: translateY(2px); }
-
-    .note{
-      margin-top: 18px;
-      text-align:center;
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-  </style>
+.note{
+  margin-top:18px;
+  font-size:15px;
+  font-weight:500;
+  color:var(--accent);
+  text-align:center;
+  line-height:1.6;
+}
+</style>
 </head>
 
 <body>
-  <div class="viewport" id="vp">
-    <div class="fit" id="fit">
-      <img class="bottom" src="bottom.jpg" alt="" aria-hidden="true"/>
+<div class="viewport" id="vp">
+  <div class="fit" id="fit">
+    <img src="bottom.jpg" class="bottom" alt="">
 
-      <div class="card" id="card">
-        <div class="refresh" aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
-            <path d="M18 3v6h-6"/>
-            <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
-            <path d="M6 21v-6h6"/>
-          </svg>
-        </div>
+    <div class="card" id="card">
+      <div class="refresh">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
+          <path d="M18 3v6h-6"/>
+          <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
+          <path d="M6 21v-6h6"/>
+        </svg>
+      </div>
 
-        <img class="photo" src="box.jpg" alt="프로필 사진" id="photo"/>
+      <img src="box.jpg" class="photo" alt="">
+      <div class="name">심우진</div>
+      <div class="sub">심상용의 자</div>
 
-        <div class="name">심우진</div>
-        <div class="sub">심상용의 자</div>
+      <div class="pill">승인완료</div>
 
-        <div class="pill">승인완료</div>
+      <div class="qrWrap">
+        <img src="qr.png" alt="">
+      </div>
 
-        <div class="qrWrap" aria-label="QR 코드">
-          <img src="qr.png" alt="QR 코드" id="qrImg">
-        </div>
+      <div class="datetime">
+        <span id="date"></span>
+        <span class="time" id="time"></span>
+      </div>
 
-        <div class="datetime" aria-live="polite">
-          <span id="dateText">0000년 00월 00일</span>
-          <span class="time" id="timeText">00:00:00</span>
-        </div>
+      <div class="bullets">
+        <div class="item"><span class="circle"></span><span>마트 이용 가능</span></div>
+        <div class="item"><span class="circle"></span><span>호텔콘도 이용 가능</span></div>
+      </div>
 
-        <div class="bullets">
-          <div class="item"><span class="dot">•</span><span>마트 이용 가능</span></div>
-          <div class="item"><span class="dot">•</span><span>호텔콘도 이용 가능</span></div>
-        </div>
-
-        <div class="note">
-          국방복지 회원임을 증명합니다.<br/>
-          ※캡쳐된 화면은 사용이 불가능합니다.
-        </div>
+      <div class="note">
+        국방복지 회원임을 증명합니다.<br>
+        ※캡쳐된 화면은 사용이 불가능합니다.
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    document.addEventListener('touchmove', e => e.preventDefault(), { passive:false });
+<script>
+function pad(n){return String(n).padStart(2,'0')}
+function tick(){
+  const d=new Date();
+  date.textContent=`${d.getFullYear()}년 ${pad(d.getMonth()+1)}월 ${pad(d.getDate())}일`;
+  time.textContent=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+tick(); setInterval(tick,1000);
 
-    const pad2 = n => String(n).padStart(2,'0');
-    function updateDateTime(){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = pad2(now.getMonth()+1);
-      const d = pad2(now.getDate());
-      const hh = pad2(now.getHours());
-      const mm = pad2(now.getMinutes());
-      const ss = pad2(now.getSeconds());
-      document.getElementById('dateText').textContent = `${y}년 ${m}월 ${d}일`;
-      document.getElementById('timeText').textContent = `${hh}:${mm}:${ss}`;
-    }
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-
-    function px(v){ return parseFloat(v)||0; }
-
-    function fitScale(){
-      const vp = document.getElementById('vp');
-      const card = document.getElementById('card');
-
-      const vvW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-      const vvH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-
-      const vps = getComputedStyle(vp);
-      const padT = px(vps.paddingTop), padB = px(vps.paddingBottom);
-      const padL = px(vps.paddingLeft), padR = px(vps.paddingRight);
-
-      const availW = Math.max(10, vvW - padL - padR);
-      const availH = Math.max(10, vvH - padT - padB);
-
-      const baseW = 393;
-      const contentH = card.scrollHeight;
-
-      const sW = availW / baseW;
-      const sH = availH / contentH;
-
-      const userShrink = parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--userShrink')
-      ) || 1;
-
-      const s = Math.min(1, sW, sH) * userShrink * 0.99;
-      document.documentElement.style.setProperty('--scale', s.toFixed(4));
-    }
-
-    window.addEventListener('load', fitScale);
-    window.addEventListener('resize', fitScale);
-    window.addEventListener('pageshow', fitScale);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitScale);
-
-    document.getElementById('photo').addEventListener('load', fitScale);
-    document.getElementById('qrImg').addEventListener('load', fitScale);
-
-    setTimeout(fitScale, 60);
-    setTimeout(fitScale, 200);
-    setTimeout(fitScale, 500);
-  </script>
+/* 화면 맞춤 */
+function fit(){
+  const h=card.scrollHeight;
+  const vh=window.innerHeight;
+  const s=Math.min(1,vh/h)*0.92;
+  document.documentElement.style.setProperty('--scale',s);
+}
+window.onload=fit;
+window.onresize=fit;
+</script>
 </body>
 </html>
