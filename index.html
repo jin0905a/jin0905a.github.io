@@ -14,6 +14,7 @@
       --purple:#4b21ff;
       --accent:#6d65ff;
       --time-red:#e11d48;
+      --scale: 1;
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -22,28 +23,67 @@
       margin:0;
       background:#fff;
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      overflow:hidden; /* 스크롤 절대 금지 */
+      overflow:hidden; /* 스크롤 완전 금지 */
     }
 
     /* iOS 주소창 변화 대응 */
-    .screen{
+    .viewport{
       height: calc(var(--vh, 1vh) * 100);
       width:100vw;
-      padding: calc(env(safe-area-inset-top) + 14px) 22px calc(env(safe-area-inset-bottom) + 14px) 22px;
+      padding:
+        calc(env(safe-area-inset-top) + 10px)
+        20px
+        calc(env(safe-area-inset-bottom) + 10px)
+        20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
       position:relative;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    /* 전체를 통째로 스케일(비율 유지) */
+    .scaled{
+      transform: scale(var(--scale));
+      transform-origin: top center;
+      width: 360px;          /* 디자인 기준 폭 (원본 느낌) */
+      position:relative;
+    }
+
+    /* 하단 워터마크(레이아웃에 영향 X) */
+    .watermark{
+      position:absolute;
+      right:-140px;
+      bottom:-160px;
+      width: 720px;
+      opacity:.18;
+      pointer-events:none;
+      animation: wmFade 2s ease-in-out infinite;
+      z-index:0;
+    }
+    @keyframes wmFade{
+      0%{ opacity:.18; }
+      50%{ opacity:0; }
+      100%{ opacity:.18; }
+    }
+
+    /* 콘텐츠는 watermark 위 */
+    .content{
+      position:relative;
+      z-index:1;
       display:flex;
       flex-direction:column;
       align-items:center;
     }
 
-    /* 상단 리프레시 아이콘 */
+    /* 상단 새로고침 아이콘 */
     .refresh{
       width:56px; height:56px;
       border-radius:999px;
       background:#f3f4f6;
       display:grid; place-items:center;
-      margin-top: 6px;
-      flex: 0 0 auto;
+      margin-top: 4px;
     }
     .refresh svg{
       width:26px; height:26px;
@@ -51,21 +91,10 @@
       stroke-linecap:round; stroke-linejoin:round;
     }
 
-    /* 메인 콘텐츠: 원본처럼 위에서 아래로 고정 */
-    .content{
-      width:100%;
-      max-width: 430px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    /* 사진 크기: 원본 비율 느낌 */
+    /* 사진(원본 비율) */
     .photo{
-      width: min(300px, 78vw);
-      aspect-ratio: 4 / 5;
+      width: 300px;
+      height: 380px;
       object-fit:cover;
       background:#e5e7eb;
       margin-top: 18px;
@@ -73,9 +102,9 @@
 
     .name{
       margin-top: 14px;
-      font-size: 36px;
+      font-size: 38px;
       font-weight: 900;
-      letter-spacing: -0.8px;
+      letter-spacing: -0.9px;
       line-height:1.05;
       text-align:center;
     }
@@ -87,36 +116,29 @@
       text-align:center;
     }
 
+    /* 승인완료 버튼(원본처럼 길고 납작하게) */
     .pill{
       margin-top: 18px;
-      width: min(520px, 92%);
-      height: 62px;
+      width: 340px;
+      height: 64px;
       border-radius: 999px;
       background: var(--purple);
       color:#fff;
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 900;
       display:flex;
       align-items:center;
       justify-content:center;
       box-shadow: 0 10px 20px rgba(75,33,255,.25);
-      flex: 0 0 auto;
     }
 
-    /* QR: 원본처럼 버튼 아래 적당한 크기 */
-    #qrcode{
+    /* QR */
+    .qr{
       margin-top: 18px;
       width: 170px;
       height: 170px;
-      display:grid;
-      place-items:center;
-      background:#fff;
-      flex: 0 0 auto;
-    }
-    #qrcode canvas, #qrcode img{
-      width: 170px !important;
-      height: 170px !important;
       display:block;
+      background:#fff;
     }
 
     .datetime{
@@ -128,110 +150,75 @@
       gap: 14px;
       align-items:baseline;
       white-space:nowrap;
-      flex: 0 0 auto;
     }
     .datetime .time{ color: var(--time-red); }
 
     .bullets{
       margin-top: 18px;
-      width: min(520px, 92%);
+      width: 340px;
       color: var(--accent);
       font-weight: 900;
       font-size: 34px;
       line-height: 1.25;
-      flex: 0 0 auto;
     }
     .item{ display:flex; gap:12px; }
     .dot{ transform: translateY(2px); }
 
     .note{
       margin-top: 26px;
+      padding-bottom: 10px;
       text-align:center;
       color: var(--accent);
       font-weight: 800;
       font-size: 18px;
       line-height: 1.55;
-      flex: 0 0 auto;
-    }
-
-    /* 하단 bottom.jpg: 오른쪽 아래 워터마크 느낌 + 2초 페이드 */
-    .bottom{
-      position:absolute;
-      right:-60px;
-      bottom:-80px;
-      width: 120%;
-      max-width: 900px;
-      opacity: .22;
-      pointer-events:none;
-      animation: bottomFade 2s ease-in-out infinite;
-    }
-    @keyframes bottomFade{
-      0%   { opacity: .22; }
-      50%  { opacity: 0; }
-      100% { opacity: .22; }
-    }
-
-    /* “한 화면 고정” 안전장치: 높이가 부족하면 살짝만 자동 축소 */
-    @media (max-height: 820px){
-      .photo{ width:min(270px, 74vw); }
-      .name{ font-size: 34px; }
-      .bullets{ font-size: 32px; }
-      .note{ font-size: 17px; }
-    }
-    @media (max-height: 760px){
-      .photo{ width:min(250px, 70vw); margin-top:14px; }
-      .pill{ height:58px; font-size:24px; }
-      #qrcode{ width:155px; height:155px; }
-      #qrcode canvas, #qrcode img{ width:155px !important; height:155px !important; }
-      .datetime{ font-size:24px; margin-top:14px; }
-      .bullets{ font-size:30px; margin-top:14px; }
-      .note{ margin-top:18px; }
     }
   </style>
 </head>
 
 <body>
-  <main class="screen" role="application" aria-label="회원증">
-    <div class="refresh" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
-        <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
-        <path d="M18 3v6h-6"/>
-        <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
-        <path d="M6 21v-6h6"/>
-      </svg>
+  <main class="viewport" role="application" aria-label="회원증">
+    <div class="scaled" id="scaledRoot">
+      <img class="watermark" src="bottom.jpg" alt="" aria-hidden="true" />
+
+      <div class="content" id="card">
+        <div class="refresh" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
+            <path d="M18 3v6h-6"/>
+            <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
+            <path d="M6 21v-6h6"/>
+          </svg>
+        </div>
+
+        <img class="photo" src="box.jpg" alt="프로필 사진" />
+
+        <div class="name">심우진</div>
+        <div class="sub">심상용의 자</div>
+
+        <div class="pill">승인완료</div>
+
+        <!-- ✅ QR: 자동 생성(인터넷 되면 바로 표시) -->
+        <img class="qr" id="qrImg" alt="QR 코드" />
+
+        <div class="datetime" aria-live="polite">
+          <span id="dateText">0000년 00월 00일</span>
+          <span class="time" id="timeText">00:00:00</span>
+        </div>
+
+        <div class="bullets" aria-label="사용 가능 항목">
+          <div class="item"><span class="dot">•</span><span>마트 이용 가능</span></div>
+          <div class="item"><span class="dot">•</span><span>호텔콘도 이용 가능</span></div>
+        </div>
+
+        <div class="note">
+          국방복지 회원임을 증명합니다.<br/>
+          ※캡쳐된 화면은 사용이 불가능합니다.
+        </div>
+      </div>
     </div>
-
-    <section class="content">
-      <img class="photo" src="box.jpg" alt="프로필 사진" />
-
-      <div class="name">심우진</div>
-      <div class="sub">심상용의 자</div>
-
-      <div class="pill">승인완료</div>
-
-      <!-- QR 자동 생성 영역 -->
-      <div id="qrcode" aria-label="QR 코드"></div>
-
-      <div class="datetime" aria-live="polite">
-        <span id="dateText">0000년 00월 00일</span>
-        <span class="time" id="timeText">00:00:00</span>
-      </div>
-
-      <div class="bullets" aria-label="사용 가능 항목">
-        <div class="item"><span class="dot">•</span><span>마트 이용 가능</span></div>
-        <div class="item"><span class="dot">•</span><span>호텔콘도 이용 가능</span></div>
-      </div>
-
-      <div class="note">
-        국방복지 회원임을 증명합니다.<br/>
-        ※캡쳐된 화면은 사용이 불가능합니다.
-      </div>
-    </section>
-
-    <img class="bottom" src="bottom.jpg" alt="" aria-hidden="true" />
   </main>
 
-  <!-- QR 생성(외부 파일 없이 동작) -->
   <script>
     // iOS 100vh 보정
     function setVh(){
@@ -243,7 +230,7 @@
     // 스크롤/바운스 방지
     document.addEventListener('touchmove', e => e.preventDefault(), { passive:false });
 
-    // 날짜/시간 실시간
+    // ✅ 날짜/시간 실시간
     const pad2 = n => String(n).padStart(2,'0');
     function updateDateTime(){
       const now = new Date();
@@ -259,96 +246,40 @@
     updateDateTime();
     setInterval(updateDateTime, 1000);
 
-    // ✅ QR 코드: 내가 자동 생성 (내용은 네가 원하는 문자열로 바꾸면 됨)
-    // 예: 멤버ID, URL, 토큰 등
-    const QR_VALUE = "APPROVED|SIMWOOJIN|2026-02-05";  // <- 원하는 값으로 변경
+    // ✅ QR 자동 생성 (원하면 값만 바꾸면 됨)
+    const QR_VALUE = "APPROVED|SIMWOOJIN|2026-02-05";
+    const qrSize = 170;
+    // 외부 라이브러리 없이: QR 이미지 생성 서비스 사용 (일반적으로 잘 뜸)
+    // (인터넷 안 되는 환경이면 qr.png로 교체하면 됨)
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(QR_VALUE)}`;
+    document.getElementById('qrImg').src = qrUrl;
 
-    // 아주 간단/확실하게: 서버 없이 캔버스에 QR을 생성하는 최소 구현 (에러 없이 보이게)
-    // ※ QR 정확도가 중요하면 QR_VALUE만 바꿔도 동일하게 생성됨.
-    // (아래는 작은 QR 생성기: 외부 라이브러리 없이 동작하도록 최소화한 버전)
-    (function(){
-      // ---- tiny QR generator (minimal) ----
-      // NOTE: 이 구현은 “일반적인 문자열” QR 생성용으로 충분히 동작하는 경량 버전.
-      // 길이가 너무 길면(수백자) 실패할 수 있으니 QR_VALUE는 짧게 유지 권장.
-      function makeQRCanvas(text, size){
-        // fallback: 온라인 API 대신 "확실히 표시"를 위해 data->pattern을 만드는 단순 QR(표시용)
-        // 실제 스캔이 필요하면 QR_VALUE를 짧게 + HTTPS 환경에서 사용 권장
-        const c = document.createElement('canvas');
-        c.width = c.height = size;
-        const ctx = c.getContext('2d');
+    // ✅ 핵심: “내용이 화면보다 크면” 전체를 자동으로 축소해서 절대 안 잘리게
+    function fitToScreen(){
+      const root = document.getElementById('scaledRoot');
+      const card = document.getElementById('card');
 
-        // 흰 배경
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0,0,size,size);
+      // scale 초기화 후 측정
+      document.documentElement.style.setProperty('--scale', 1);
 
-        // 의사 QR 패턴(스캔용 QR이 필요하면 말해줘. 스캔 100% 보장 버전으로 바꿔줄게.)
-        // 지금은 “2번 이미지처럼 QR이 깨지지 않고 정상 표시”가 목적이라 안정적으로 표시하는 버전.
-        const cells = 41; // QR처럼 보이는 격자
-        const cell = Math.floor(size / cells);
-        const margin = Math.floor((size - cell * cells) / 2);
+      // 다음 프레임에서 정확 측정
+      requestAnimationFrame(() => {
+        const viewportH = window.innerHeight;
+        const rect = root.getBoundingClientRect();
+        const neededH = rect.height;
 
-        // 해시로 패턴 만들기
-        let h = 2166136261;
-        for (let i=0;i<text.length;i++){
-          h ^= text.charCodeAt(i);
-          h = Math.imul(h, 16777619);
-        }
+        // 여유 8px
+        const s = Math.min(1, (viewportH - 8) / neededH);
+        document.documentElement.style.setProperty('--scale', s.toFixed(4));
+      });
+    }
 
-        function rand(){
-          h ^= h << 13; h ^= h >>> 17; h ^= h << 5;
-          return (h >>> 0) / 4294967295;
-        }
+    // 이미지 로드 이후에도 다시 맞추기
+    window.addEventListener('load', fitToScreen);
+    window.addEventListener('resize', fitToScreen);
 
-        function drawFinder(x,y){
-          ctx.fillStyle='#000';
-          ctx.fillRect(margin + x*cell, margin + y*cell, cell*7, cell*7);
-          ctx.fillStyle='#fff';
-          ctx.fillRect(margin + (x+1)*cell, margin + (y+1)*cell, cell*5, cell*5);
-          ctx.fillStyle='#000';
-          ctx.fillRect(margin + (x+2)*cell, margin + (y+2)*cell, cell*3, cell*3);
-        }
-
-        // Finder patterns
-        drawFinder(2,2);
-        drawFinder(cells-9,2);
-        drawFinder(2,cells-9);
-
-        // Data-ish modules
-        ctx.fillStyle='#000';
-        for (let y=0;y<cells;y++){
-          for (let x=0;x<cells;x++){
-            // finder 영역 피하기
-            const inTL = x>=2 && x<9 && y>=2 && y<9;
-            const inTR = x>=cells-9 && x<cells-2 && y>=2 && y<9;
-            const inBL = x>=2 && x<9 && y>=cells-9 && y<cells-2;
-            if (inTL || inTR || inBL) continue;
-
-            // 타이밍 라인 느낌
-            if (x===10 || y===10){
-              if ((x+y)%2===0){
-                ctx.fillRect(margin + x*cell, margin + y*cell, cell, cell);
-              }
-              continue;
-            }
-
-            if (rand() > 0.62){
-              ctx.fillRect(margin + x*cell, margin + y*cell, cell, cell);
-            }
-          }
-        }
-
-        return c;
-      }
-
-      const box = document.getElementById('qrcode');
-      box.innerHTML = '';
-      box.appendChild(makeQRCanvas(QR_VALUE, 170));
-    })();
-
-    // 더블탭 확대 방지
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) e.preventDefault();
-      lastTouchEnd = now;
-    }, { p
+    // QR 로드되면 높이 변할 수 있으니 한번 더
+    document.getElementById('qrImg').addEventListener('load', fitToScreen);
+  </script>
+</body>
+</html>
