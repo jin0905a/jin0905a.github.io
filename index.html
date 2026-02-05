@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>회원증</title>
 
 <style>
@@ -12,9 +11,8 @@
   --purple:#4b21ff;
   --accent:#6d65ff;
   --time-red:#e11d48;
-  --scale:1;
-  --userShrink:0.92;
   --font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  --scale:1;
 }
 
 *{box-sizing:border-box;}
@@ -24,7 +22,6 @@ body{
   background:#fff;
   font-family:var(--font);
   overflow:hidden;
-  color:#111;
 }
 
 .viewport{
@@ -44,22 +41,23 @@ body{
   position:relative;
 }
 
-/* ✅ bottom 워터마크: 흰 부분 튀는 느낌 제거 */
+/* ✅ bottom – 배경 완전 숨기고 회색만 강조 */
 .bottom{
   position:absolute;
-  right:-20px;
-  bottom:-30px;
+  right:-40px;
+  bottom:-120px;
   width:340px;
-  opacity:.28;
+  opacity:.38;
   mix-blend-mode:multiply;
-  filter:brightness(.85) contrast(1.25);
+  filter:contrast(1.6) brightness(.8);
   pointer-events:none;
-  animation:wmFade 2s ease-in-out infinite;
+  mask-image:linear-gradient(to top, black 65%, transparent 100%);
+  animation:fade 2s ease-in-out infinite;
 }
-@keyframes wmFade{
-  0%{opacity:.28}
+@keyframes fade{
+  0%{opacity:.38}
   50%{opacity:0}
-  100%{opacity:.28}
+  100%{opacity:.38}
 }
 
 .card{
@@ -73,46 +71,45 @@ body{
 
 /* refresh */
 .refresh{
-  width:60px;height:60px;
+  width:56px;height:56px;
   border-radius:50%;
   background:#f3f4f6;
   display:grid;
   place-items:center;
 }
 .refresh svg{
-  width:26px;height:26px;
+  width:24px;height:24px;
   stroke:#111;
   stroke-width:2.2;
   fill:none;
 }
 
-/* ✅ 사진 1/2 */
+/* ✅ 사진 +5% */
 .photo{
   margin-top:14px;
-  width:125px;
-  height:150px;
+  width:131px;
+  height:157px;
   object-fit:cover;
 }
 
-/* ✅ 텍스트 얇게 */
+/* ✅ 텍스트 전체 축소 */
 .name{
-  margin-top:14px;
-  font-size:32px;
+  margin-top:12px;
+  font-size:28px;
   font-weight:600;
-  letter-spacing:-0.6px;
+  letter-spacing:-0.5px;
 }
 .sub{
   margin-top:6px;
-  font-size:18px;
+  font-size:16px;
   font-weight:500;
-  letter-spacing:-0.3px;
 }
 
-/* ✅ 승인완료 버튼 중앙 정렬 + 더 길게 */
+/* ✅ 승인완료 버튼 절반 */
 .pill{
-  margin-top:16px;
-  width:360px;
-  height:52px;
+  margin-top:14px;
+  width:330px;
+  height:36px;
   background:var(--purple);
   color:#fff;
   border-radius:999px;
@@ -121,41 +118,40 @@ body{
   align-items:center;
   justify-content:center;
 
-  font-size:22px;
-  font-weight:700;
-  letter-spacing:-0.3px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:-0.2px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
-/* ✅ QR 1/2 */
+/* QR */
 .qrWrap{
-  margin-top:12px;
+  margin-top:10px;
   width:85px;
   height:85px;
 }
 .qrWrap img{
   width:85px;
   height:85px;
-  display:block;
 }
 
-/* 날짜 얇게 */
+/* 날짜 – 얇고 작게 */
 .datetime{
-  margin-top:12px;
-  font-size:22px;
+  margin-top:10px;
+  font-size:18px;
   font-weight:500;
-  letter-spacing:-0.4px;
+  letter-spacing:-0.3px;
 }
 .datetime .time{
   color:var(--time-red);
   font-weight:600;
 }
 
-/* ✅ 속 빈 원 */
+/* 리스트 */
 .bullets{
-  margin-top:14px;
-  width:320px;
-  font-size:26px;
+  margin-top:12px;
+  width:300px;
+  font-size:22px;
   font-weight:600;
   color:var(--accent);
 }
@@ -165,12 +161,13 @@ body{
   gap:10px;
 }
 .circle{
-  width:14px;
-  height:14px;
+  width:12px;
+  height:12px;
   border:2px solid var(--accent);
   border-radius:50%;
 }
 
+/* ❗ 이 문구는 그대로 */
 .note{
   margin-top:18px;
   font-size:15px;
@@ -185,6 +182,7 @@ body{
 <body>
 <div class="viewport" id="vp">
   <div class="fit" id="fit">
+
     <img src="bottom.jpg" class="bottom" alt="">
 
     <div class="card" id="card">
@@ -197,14 +195,14 @@ body{
         </svg>
       </div>
 
-      <img src="box.jpg" class="photo" alt="">
+      <img src="box.jpg" class="photo">
       <div class="name">심우진</div>
       <div class="sub">심상용의 자</div>
 
       <div class="pill">승인완료</div>
 
       <div class="qrWrap">
-        <img src="qr.png" alt="">
+        <img src="qr.png">
       </div>
 
       <div class="datetime">
@@ -213,8 +211,8 @@ body{
       </div>
 
       <div class="bullets">
-        <div class="item"><span class="circle"></span><span>마트 이용 가능</span></div>
-        <div class="item"><span class="circle"></span><span>호텔콘도 이용 가능</span></div>
+        <div class="item"><span class="circle"></span>마트 이용 가능</div>
+        <div class="item"><span class="circle"></span>호텔콘도 이용 가능</div>
       </div>
 
       <div class="note">
@@ -234,15 +232,13 @@ function tick(){
 }
 tick(); setInterval(tick,1000);
 
-/* 화면 맞춤 */
 function fit(){
   const h=card.scrollHeight;
-  const vh=window.innerHeight;
-  const s=Math.min(1,vh/h)*0.92;
+  const vh=innerHeight;
+  const s=Math.min(1,vh/h)*0.94;
   document.documentElement.style.setProperty('--scale',s);
 }
-window.onload=fit;
-window.onresize=fit;
+onload=fit; onresize=fit;
 </script>
 </body>
 </html>
