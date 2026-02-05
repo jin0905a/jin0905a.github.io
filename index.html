@@ -5,7 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 
-  <!-- iOS 홈화면(Standalone)에서 "앱처럼" 보이게 -->
+  <!-- iOS 홈화면(Standalone) -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="회원증" />
@@ -16,44 +16,63 @@
   <style>
     :root{
       --purple:#4b21ff;
-      --text:#111;
-      --muted:#6b7280;
       --time-red:#e11d48;
-      --bg:#ffffff;
+      --accent:#6d65ff;
+
+      /* iPhone 14 Pro 기준(논리 픽셀) */
+      --baseW: 393;
+      --baseH: 852;
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     html,body{ height:100%; }
     body{
       margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR",
-                   "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      overflow:hidden; /* 스크롤 완전 차단 */
+      background:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",
+                  "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      overflow:hidden; /* 스크롤 완전 금지 */
     }
 
-    /* iPhone safe-area 대응 */
-    .app{
-      position:relative;
-      height:100vh;
-      padding: calc(env(safe-area-inset-top) + 18px) 22px
-               calc(env(safe-area-inset-bottom) + 18px) 22px;
+    /* iOS 주소창 변화에도 100vh 안정화 */
+    .viewport{
+      height: calc(var(--vh, 1vh) * 100);
+      width:100vw;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+      display:grid;
+      place-items:center;
+      background:#fff;
+    }
+
+    /* 전체를 한 덩어리로 “비율 유지” 축소/확대 */
+    .stage{
+      width: calc(var(--baseW) * 1px);
+      height: calc(var(--baseH) * 1px);
+      transform: scale(var(--scale));
+      transform-origin: top center;
+      position: relative;
+      background:#fff;
+    }
+
+    /* 내부 레이아웃(스크린샷 비율 느낌 유지) */
+    .content{
+      position:absolute;
+      inset: 0;
+      padding: 18px 22px 22px 22px;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:flex-start;
-      gap:14px;
+      gap: 12px;
     }
 
-    /* 상단 새로고침 원형 아이콘(모양만) */
     .refresh{
-      width:56px; height:56px;
+      width:54px; height:54px;
       border-radius:999px;
       background:#f3f4f6;
       display:grid;
       place-items:center;
-      margin-top:6px;
+      margin-top:2px;
     }
     .refresh svg{
       width:26px; height:26px;
@@ -64,31 +83,30 @@
       stroke-linejoin:round;
     }
 
-    /* 사람 사진 */
+    /* 사진(스크린샷 느낌: 직사각 + 여백) */
     .photo{
-      width:240px;
-      aspect-ratio: 3 / 4;
-      border-radius:2px;
+      width: 235px;
+      height: 295px; /* 235:295 ≈ 스샷 비율 느낌 */
       object-fit:cover;
       background:#e5e7eb;
     }
 
     .name{
-      margin-top:6px;
+      margin-top:2px;
       font-size:34px;
-      font-weight:800;
-      letter-spacing:-0.5px;
+      font-weight:900;
+      letter-spacing:-0.6px;
     }
     .sub{
+      margin-top:-6px;
       font-size:22px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:-0.3px;
-      margin-top:-4px;
     }
 
     .pill{
-      width:min(520px, 92%);
-      height:62px;
+      width: 330px;
+      height: 60px;
       border-radius:999px;
       background:var(--purple);
       color:#fff;
@@ -96,169 +114,162 @@
       align-items:center;
       justify-content:center;
       font-size:24px;
-      font-weight:800;
+      font-weight:900;
       box-shadow: 0 6px 18px rgba(75,33,255,.22);
-      margin-top:2px;
       user-select:none;
+      margin-top:2px;
     }
 
     .qr{
       width:170px;
       height:170px;
       object-fit:contain;
-      margin-top:8px;
+      margin-top:6px;
       background:#fff;
     }
 
     .datetime{
-      margin-top:2px;
+      margin-top:0px;
       font-size:34px;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:-0.8px;
       display:flex;
-      align-items:baseline;
       gap:14px;
       white-space:nowrap;
+      align-items:baseline;
     }
-    .datetime .date{ color:#111; }
     .datetime .time{ color:var(--time-red); }
 
     .bullets{
-      margin-top:6px;
-      width:min(520px, 92%);
-      color:#6d65ff; /* 스샷 느낌의 보라색 */
+      margin-top:4px;
+      width: 340px;
+      color:var(--accent);
       font-weight:900;
       font-size:32px;
       line-height:1.35;
     }
-    .bullets .item{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-    }
-    .bullets .dot{
-      font-size:34px;
-      line-height:1.1;
-      transform: translateY(2px);
-    }
+    .item{ display:flex; gap:10px; }
+    .dot{ transform: translateY(2px); }
 
     .note{
       margin-top:6px;
       text-align:center;
-      color:#6d65ff;
+      color:var(--accent);
       font-weight:800;
       font-size:18px;
       line-height:1.5;
     }
 
-    /* 하단 회색 이미지(애니메이션) */
+    /* 하단 회색 이미지: "이미지 자체만" 2초 간격 부드럽게 깜빡 */
     .bottom{
       position:absolute;
-      left:0;
+      left:0; right:0;
       bottom:0;
-      width:100%;
-      pointer-events:none;
-      padding-bottom: env(safe-area-inset-bottom);
       display:flex;
       justify-content:center;
+      pointer-events:none;
+      padding-bottom: 0px;
     }
     .bottom img{
-      width:100%;
-      max-width:900px;
+      width: 100%;
       height:auto;
+      max-width: 900px;
       opacity:1;
-      animation: fadeBlink 1s ease-in-out infinite;
-      /* 1초 동안: 보였다가(1) → 사라졌다가(0) → 다시 보임(1) */
+      animation: bottomFade 2s ease-in-out infinite;
     }
-    @keyframes fadeBlink{
+    @keyframes bottomFade{
       0%   { opacity:1; }
       50%  { opacity:0; }
       100% { opacity:1; }
-    }
-
-    /* 화면이 작은 경우(아이폰 SE 등) 대비: 약간 축소 */
-    @media (max-height: 780px){
-      .photo{ width:210px; }
-      .name{ font-size:30px; }
-      .sub{ font-size:20px; }
-      .pill{ height:56px; font-size:22px; }
-      .qr{ width:150px; height:150px; }
-      .datetime{ font-size:30px; }
-      .bullets{ font-size:28px; }
     }
   </style>
 </head>
 
 <body>
-  <main class="app" role="application" aria-label="회원증 화면">
-    <div class="refresh" aria-hidden="true">
-      <!-- 리프레시 아이콘 -->
-      <svg viewBox="0 0 24 24">
-        <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
-        <path d="M18 3v6h-6"/>
-        <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
-        <path d="M6 21v-6h6"/>
-      </svg>
+  <div class="viewport">
+    <div class="stage" id="stage">
+      <div class="content" aria-label="회원증 화면">
+        <div class="refresh" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 0 1 15.36-6.36"/>
+            <path d="M18 3v6h-6"/>
+            <path d="M21 12a9 9 0 0 1-15.36 6.36"/>
+            <path d="M6 21v-6h6"/>
+          </svg>
+        </div>
+
+        <img class="photo" src="box.jpg" alt="프로필 사진" />
+
+        <div class="name">심우진</div>
+        <div class="sub">심상용의 자</div>
+
+        <div class="pill">승인완료</div>
+
+        <img class="qr" src="qr.png" alt="QR 코드" />
+
+        <div class="datetime" aria-live="polite">
+          <span class="date" id="dateText">0000년 00월 00일</span>
+          <span class="time" id="timeText">00:00:00</span>
+        </div>
+
+        <div class="bullets" aria-label="사용 가능 항목">
+          <div class="item"><span class="dot">•</span><span>마트 이용 가능</span></div>
+          <div class="item"><span class="dot">•</span><span>호텔콘도 이용 가능</span></div>
+        </div>
+
+        <div class="note">
+          국방복지 회원임을 증명합니다.<br/>
+          ※캡쳐된 화면은 사용이 불가능합니다.
+        </div>
+      </div>
+
+      <div class="bottom" aria-hidden="true">
+        <img src="bottom.jpg" alt="" />
+      </div>
     </div>
-
-    <!-- 1) 상단 사람 얼굴 이미지 -->
-    <img class="photo" src="box.jpg" alt="프로필 사진" />
-
-    <div class="name">심우진</div>
-    <div class="sub">심상용의 자</div>
-
-    <div class="pill">승인완료</div>
-
-    <!-- QR 이미지: 네 파일명으로 교체 -->
-    <img class="qr" src="qr.png" alt="QR 코드" />
-
-    <!-- 2) 날짜/시간 실시간 반영 -->
-    <div class="datetime" aria-live="polite">
-      <span class="date" id="dateText">0000년 00월 00일</span>
-      <span class="time" id="timeText">00:00:00</span>
-    </div>
-
-    <section class="bullets" aria-label="사용 가능 항목">
-      <div class="item"><span class="dot">•</span><span>마트 이용 가능</span></div>
-      <div class="item"><span class="dot">•</span><span>호텔콘도 이용 가능</span></div>
-    </section>
-
-    <div class="note">
-      국방복지 회원임을 증명합니다.<br/>
-      ※캡쳐된 화면은 사용이 불가능합니다.
-    </div>
-
-    <!-- 3) 하단 회색 이미지 애니메이션 -->
-    <div class="bottom" aria-hidden="true">
-      <img src="bottom.jpg" alt="" />
-    </div>
-  </main>
+  </div>
 
   <script>
-    // iOS에서 스크롤/바운스 방지(추가 안전장치)
-    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive:false });
+    // iOS에서 실제 vh 보정
+    function setVh(){
+      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
 
-    function pad2(n){ return String(n).padStart(2, '0'); }
+    // "한 화면에 무조건 들어오게" 스케일 계산 (비율 유지)
+    function setScale(){
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
+      // safe-area를 이미 viewport padding으로 뺐지만,
+      // scale은 실제 화면 기준으로 넉넉히 잡아도 잘 맞음.
+      const baseW = 393;
+      const baseH = 852;
+
+      const s = Math.min(vw / baseW, vh / baseH);
+      document.documentElement.style.setProperty('--scale', s.toFixed(4));
+    }
+    setScale();
+    window.addEventListener('resize', setScale);
+
+    // 날짜/시간 실시간
+    const pad2 = n => String(n).padStart(2,'0');
     function updateDateTime(){
       const now = new Date();
-
       const y = now.getFullYear();
-      const m = pad2(now.getMonth() + 1);
+      const m = pad2(now.getMonth()+1);
       const d = pad2(now.getDate());
-
       const hh = pad2(now.getHours());
       const mm = pad2(now.getMinutes());
       const ss = pad2(now.getSeconds());
-
       document.getElementById('dateText').textContent = `${y}년 ${m}월 ${d}일`;
       document.getElementById('timeText').textContent = `${hh}:${mm}:${ss}`;
     }
-
     updateDateTime();
     setInterval(updateDateTime, 1000);
 
-    // 홈화면(Standalone)에서 더 앱처럼 보이게: 더블탭 확대 방지
+    // 더블탭 확대 방지(홈화면 앱 느낌)
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (e) => {
       const now = Date.now();
