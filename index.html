@@ -7,11 +7,11 @@
 
   <!-- iOS 홈화면 앱처럼 -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="My App" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="복지" />
+  <meta name="theme-color" content="#ffffff" />
 
-  <title>App-like Screen</title>
+  <title>Screen</title>
 
   <style>
     :root{
@@ -19,212 +19,76 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
+
+      --purple: #4b23ff; /* 스샷 느낌 보라 */
+      --purpleText: #6c63ff;
+      --grayText: #6b6b6b;
+      --redTime: #e53935;
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; margin:0; }
 
     body{
-      background: #000;
-      color: #fff;
+      background:#fff;
+      color:#111;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
 
       /* 스크롤/바운스 완전 차단 */
       overflow: hidden;
       position: fixed;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       overscroll-behavior: none;
       -webkit-overflow-scrolling: auto;
       touch-action: none;
     }
 
-    /* 홈화면 앱(standalone)에서도 한 화면 꽉 차게 */
-    .app{
-      position: relative;
+    /* ====== "아이폰14 Pro 화면" 기준 픽셀 레이아웃을 만든 뒤, 화면에 맞게 자동 스케일 ======
+       iPhone 14 Pro CSS logical size: 393 x 852
+    */
+    .viewport{
       width: 100vw;
-
-      /* iOS 주소창 변화 대응: svh + dvh */
       height: 100svh;
       height: 100dvh;
-
-      padding-top: calc(var(--safe-top) + 12px);
-      padding-bottom: calc(var(--safe-bottom) + 12px);
-      padding-left: calc(var(--safe-left) + 12px);
-      padding-right: calc(var(--safe-right) + 12px);
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
+      background:#fff;
     }
 
-    /* 상단 이미지 */
-    .top-img{
-      width: min(78vw, 320px);
-      aspect-ratio: 1 / 1;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 14px 28px rgba(0,0,0,0.45);
-      flex: 0 0 auto;
-    }
-    .top-img img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      user-select: none;
-      -webkit-user-drag: none;
+    .stage{
+      width: 393px;
+      height: 852px;
+      position: relative;
+      transform-origin: center center;
+      /* scale은 JS에서 계산해서 넣음 */
     }
 
-    /* 날짜/시간 영역 */
-    .clock{
-      flex: 1 1 auto;
-      min-height: 0;
-      width: 100%;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 6px 0;
+    /* 상단 새로고침 아이콘 (스샷처럼 원형/회색) */
+    .refreshWrap{
+      position:absolute;
+      top: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      background: #efefef;
+      display:grid;
+      place-items:center;
     }
-    .date{
-      font-size: clamp(18px, 4.2vw, 22px);
-      opacity: 0.95;
-      letter-spacing: 0.2px;
-    }
-    .time{
-      margin-top: 6px;
-      font-weight: 700;
-      font-size: clamp(44px, 10.5vw, 64px);
-      letter-spacing: 0.6px;
-      line-height: 1.05;
-    }
-    .ampm{
-      display: inline-block;
-      font-size: 0.38em;
-      font-weight: 700;
-      opacity: 0.9;
-      vertical-align: top;
-      margin-left: 6px;
-      margin-top: 6px;
+    .refreshIcon{
+      width: 28px;
+      height: 28px;
+      display:block;
     }
 
-    /* 하단 애니메이션 이미지 */
-    .bottom{
-      width: 100%;
-      flex: 0 0 auto;
-      display: flex;
-      justify-content: center;
-      padding-bottom: 4px;
-    }
-    .bottom-img{
-      width: min(92vw, 360px);
-      height: clamp(70px, 14svh, 120px);
-      border-radius: 18px;
-      overflow: hidden;
-      opacity: 0.35;
-      filter: saturate(0.2) contrast(1.05);
-      animation: bottomFadeSlide 3.8s ease-in-out infinite;
-      will-change: opacity, transform;
-    }
-    .bottom-img img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    /* “스르륵 사라졌다 다시 생김” */
-    @keyframes bottomFadeSlide{
-      0%   { opacity: 0.00; transform: translateY(10px); }
-      20%  { opacity: 0.40; transform: translateY(0px); }
-      50%  { opacity: 0.00; transform: translateY(10px); }
-      70%  { opacity: 0.40; transform: translateY(0px); }
-      100% { opacity: 0.00; transform: translateY(10px); }
-    }
-
-    /* 선택: 더 “앱처럼” 보이게 살짝 어둡게 */
-    .vignette{
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0.65) 62%, rgba(0,0,0,0.92));
-      opacity: 0.9;
-    }
-
-    /* 접근성: 애니메이션 싫으면 */
-    @media (prefers-reduced-motion: reduce){
-      .bottom-img{ animation: none; opacity: 0.25; transform: none; }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="app">
-    <div class="vignette" aria-hidden="true"></div>
-
-    <!-- 1) 상단 사람 이미지 -->
-    <div class="top-img">
-      <img src="box.jpg" alt="상단 이미지" />
-    </div>
-
-    <!-- 2) 날짜/시간 실시간 -->
-    <div class="clock" aria-live="polite">
-      <div>
-        <div class="date" id="dateText">—</div>
-        <div class="time">
-          <span id="timeText">—</span><span class="ampm" id="ampmText"></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3) 하단 회색 이미지 애니메이션 -->
-    <div class="bottom">
-      <div class="bottom-img">
-        <img src="bottom.jpg" alt="하단 이미지" />
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // iOS 사파리/홈화면 앱에서 스크롤/바운스 방지(추가 안전장치)
-    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-
-    const dateEl = document.getElementById('dateText');
-    const timeEl = document.getElementById('timeText');
-    const ampmEl = document.getElementById('ampmText');
-
-    function pad2(n){ return String(n).padStart(2, '0'); }
-
-    function updateClock(){
-      const now = new Date();
-
-      // 날짜: 2026-02-05 (목) 스타일
-      const y = now.getFullYear();
-      const m = pad2(now.getMonth() + 1);
-      const d = pad2(now.getDate());
-      const weekdays = ['일','월','화','수','목','금','토'];
-      const w = weekdays[now.getDay()];
-      dateEl.textContent = `${y}-${m}-${d} (${w})`;
-
-      // 시간: 12시간제 + AM/PM
-      let hh = now.getHours();
-      const mm = pad2(now.getMinutes());
-      const ss = pad2(now.getSeconds());
-      const isPM = hh >= 12;
-      const ampm = isPM ? 'PM' : 'AM';
-      hh = hh % 12;
-      if (hh === 0) hh = 12;
-
-      timeEl.textContent = `${hh}:${mm}:${ss}`;
-      ampmEl.textContent = ampm;
-    }
-
-    updateClock();
-    setInterval(updateClock, 250);
-  </script>
-</body>
-</html>
+    /* 중앙 박스(사진/이름) */
+    .photo{
+      position:absolute;
+      top: 150px;
+      left: 50%;
